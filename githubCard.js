@@ -1,12 +1,3 @@
-const testData = [
-    {"name": "Danielle Smith",
-    "avatar_url": "https://avatars.githubusercontent.com/u/57499759?v=4",
-    "company": "none"},
-    {"name": "Sophie Alpert",
-    "avatar_url": "https://avatars.githubusercontent.com/u/7293315?v=4",
-    "company": "Facebook"},
-  ];
-  
   class Card extends React.Component {
     render() {
       const profile = this.props;
@@ -24,9 +15,12 @@ const testData = [
   
   class Form extends React.Component {
     state = { userName: '' };
-    handleSubmit = (event) => {
+    handleSubmit = async (event) => {
       event.preventDefault();
-      console.log(this.state.userName);
+      const resp = await
+      axios.get(`https://api.github.com/users/${this.state.userName}`);
+      this.props.onSubmit(resp.data);
+      this.setState({ userName: ''});
     };
     render() {
       return (
@@ -46,27 +40,26 @@ const testData = [
   
   const CardList = (props) => (
     <div>
-      {props.profiles.map(profile => <Card {...profile}/>)}
+      {props.profiles.map(profile => <Card key={profile.id} {...profile}/>)}
     </div>
   );
   
   class App extends React.Component {
-    // constructor(props) {
-    //   super(props);
-    //   this.state = {
-    //     profiles:testData,
-    //   };
-    // } 
-    //   instead of that you can just use this new syntax
     state = {
-      profiles: testData,
+      profiles: [],
     };
+
+    addNewProfile = (profileData) => {
+        this.setState(prevState => ({
+            profiles: [...prevState.profiles, profileData]
+        }));
+    }
     
     render() {
       return (
         <div>
           <div className="header">{this.props.title}</div>
-          <Form />
+          <Form onSumit={this.addNewProfile} />
           <CardList profiles={this.state.profiles} />
         </div>
       );
