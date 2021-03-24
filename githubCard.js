@@ -23,7 +23,7 @@ const testData = [
   }
   
   class Form extends React.Component {
-    userNameInput = React.createRef();
+    userNameInput = React.createRef(); //using refs
     handleSubmit = (event) => {
       event.preventDefault();
       console.log(this.userNameInput.current.value)
